@@ -1,0 +1,27 @@
+Type: Custom TCP
+
+Port range: 3000-8080 (covers common frontend/backend ports like 3000, 5000, 5173, 8000, 8080)
+
+Source: 0.0.0.0/0
+
+chmod 400 sportsystem-key.pem
+ssh -i "sportsystem-key.pem" ubuntu@<YOUR_PUBLIC_IPV4_ADDRESS>
+
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y git curl build-essential
+git clone https://github.com/sarasrija/SportSystem.git
+cd SportSystem
+ls -la
+
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+sudo npm install -g pm2
+npm install
+# If there is a build script (e.g., React/Vite/Next.js):
+npm run build
+# Start backend or full-stack server with PM2:
+pm2 start npm --name "sportsystem" -- start
+pm2 save
+
+
+http://<YOUR_PUBLIC_IPV4_ADDRESS>:<PORT>
