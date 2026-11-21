@@ -1,66 +1,38 @@
 version: '3.8'
 
-
 services:
-
-
-  tomcat:
-
-    image: tomcat:9.0
-
-    container_name: ticket_booking_tomcat
-
+  wordpress:
+    image: wordpress
+    container_name: wp
+    restart: always
     ports:
-
-      - "8001:8080"
-
-    volumes:
-
-      - ./target/ots.war:/usr/local/tomcat/webapps/ROOT.war
-
+      - "80:80"
     depends_on:
-
       - db
-
     environment:
-
-      - DB_HOST=db
-
-      - DB_PORT=3306
-
-      - DB_NAME=appointments
-
-      - DB_USER=root
-
-      - DB_PASSWORD=admin
-
+      - WORDPRESS_DB_HOST=db:3306
+      - WORDPRESS_DB_NAME=eticket_db
+      - WORDPRESS_DB_USER=root
+      - WORDPRESS_DB_PASSWORD=admin
+    networks:
+      - eticket-net
 
   db:
-
     image: mysql:8.0
-
     container_name: ticket_booking_db
-
     restart: always
-
     environment:
-
-      MYSQL_DATABASE: appointments
-
+      MYSQL_DATABASE: eticket_db
       MYSQL_ROOT_PASSWORD: admin
-
-    ports:
-
-      - "3307:3306"
-
     volumes:
-
-      - db_data:/var/lib/mysql
-
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-
+      - eticket-db-data:/var/lib/mysql
+    networks:
+      - eticket-net
 
 volumes:
+  eticket-db-data:
+    external: true
 
-  db_data:
-
+networks:
+  eticket-net:
+    external: true
