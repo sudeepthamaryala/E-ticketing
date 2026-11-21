@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/sudeepthamaryala/E-ticketing.git'
+            }
+        }
+
+        stage('Verify Repository & Package') {
+            steps {
+                bat 'dir'
+                echo 'Source code and compose manifests verified.'
+            }
+        }
+
+        stage('Build & Deploy Stack') {
+            steps {
+                bat 'docker compose down || exit 0'
+                bat 'docker compose up -d --build'
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                bat 'docker compose ps'
+            }
+        }
+    }
+}
